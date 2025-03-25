@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.DemiLib;
 using DG.Tweening;
 using Photon.Pun;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -23,23 +24,91 @@ public class NoteManager : MonoBehaviour
     public Sprite arrow;
 
     public List<NoteInfo> NoteInfos;
+    public Queue<NoteInfo> NoteInfosQueue;
     
-    // Start is called before the first frame update
+    private float songStartTime;
+    private float currentTime;
+
+    public AudioSource BG;
+    public float commonDuration;
+    public float commonCreatingTime;
+    public float startDelay;
     void Start()
     {
+        NoteInfosQueue = new Queue<NoteInfo>();
         
+    }
 
+    [PunRPC]
+    void LoadNote()
+    {
+        currentTime = Time.time;
+        songStartTime = Time.time;
+        
+        int player = PhotonNetwork.CurrentRoom.PlayerCount;
+        for (int i = 0; i < NoteInfos.Count; i++)
+        {
+            NoteInfos[i].Duration = commonDuration;
+            int actorNumber = 1+ i % player;
+            NoteInfos[i].ActorNumber = actorNumber;
+            NoteInfos[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
+            if (i % 3 == 0)
+            {
+                var temp = new NoteInfo();
+                temp.ActorNumber = NoteInfos[i].ActorNumber;
+                temp.NoteCreatingTime = NoteInfos[i].NoteCreatingTime;
+                temp.Duration = NoteInfos[i].Duration;
+                if (NoteInfos[i].DirectionNum != 1)
+                {
+                    temp.DirectionNum = 1;
+                }
+                else
+                {
+                    temp.DirectionNum = 0;
+                }
+            
+                temp.scaleNum = 8;
+                NoteInfosQueue.Enqueue(temp);
+            }
+            NoteInfosQueue.Enqueue(NoteInfos[i]);
+            
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        currentTime += Time.deltaTime; // 경과 시간 계산
+
+        while (NoteInfosQueue.Count > 0 && NoteInfosQueue.Peek().NoteCreatingTime + songStartTime <= currentTime)
+        {
+            Debug.Log("currentTime: " + currentTime);
+            SpawnNote(NoteInfosQueue.Dequeue());
+        }
+    }
+    
+    void SpawnNote(NoteInfo note)
+    {
+        CreateNote2(note.ActorNumber, note.DirectionNum,note.Duration,note.scaleNum);
     }
 
     public void OnClickStartButton()
     {
-        StartCoroutine(TempCoroutine());
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
+        
+        //StartCoroutine(StartBG());
+        //StartCoroutine(TempCoroutine());
+        
+        GetComponent<PhotonView>().RPC("LoadNote",RpcTarget.All);
+    }
+
+    IEnumerator StartBG()
+    {
+        yield return new WaitForSeconds(startDelay);
+        BG.Play();
     }
 
     [PunRPC]
@@ -119,7 +188,55 @@ public class NoteManager : MonoBehaviour
             Destroy(newNote2);
         }
     }
+    
+    public void CreateNote2(int randomActorNumber, int randomNum, float duration, int scaleNum)
+    {
+        GameObject newNote = Instantiate(Note);
+            
+        //int randomActorNumber = 1;
+        newNote.GetComponent<NoteController>().actorNumber = randomActorNumber;
+        newNote.GetComponent<NoteController>().scaleNum = scaleNum;
+        
+        if (randomActorNumber == 1)
+        {
+            newNote.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+        else if (randomActorNumber == 2)
+        {
+            newNote.GetComponent<SpriteRenderer>().color = Color.yellow;
+        }
+        else if (randomActorNumber == 3)
+        {
+            newNote.GetComponent<SpriteRenderer>().color = Color.blue;
+        }
+        else if (randomActorNumber == 4)
+        {
+            newNote.GetComponent<SpriteRenderer>().color = Color.green;
+        }
+            
+        if (randomNum == 0)
+        {
+            newNote.GetComponent<SpriteRenderer>().sprite = arrow;
+            newNote.transform.position = leftStart.transform.position;
+            newNote.transform.DOMove(leftEnd.position - new Vector3(3, 0, 0), duration).SetEase(Ease.Linear).OnComplete(() => Destroy(newNote));
+        }
+        else if (randomNum == 1)
+        {
+            newNote.transform.localScale = Vector3.one;
+            newNote.transform.position = jumpStart.transform.position;
+            newNote.transform.DOMove(jumpEnd.position - new Vector3(3,0,0), duration).SetEase(Ease.Linear).OnComplete(() => Destroy(newNote));
+        }
+        else
+        {
+            newNote.GetComponent<SpriteRenderer>().sprite = arrow;
+            newNote.transform.Rotate(Vector3.forward,-180f);
+            newNote.transform.position = rightStart.transform.position;
+            newNote.transform.DOMove(rightEnd.position - new Vector3(3,0,0), duration).SetEase(Ease.Linear).OnComplete(() => Destroy(newNote));
+        }
+    }
+    
 }
+
 
 [Serializable]
 public class NoteInfo
@@ -127,5 +244,8 @@ public class NoteInfo
     public float Duration;
     public float NoteCreatingTime;
     public int ActorNumber;
+    // 0,1,2 left, jump, right
     public int DirectionNum;
+    //  0~7 도~ 높은 도
+    public int scaleNum;
 }

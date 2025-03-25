@@ -22,6 +22,7 @@ public class JurgeNote : MonoBehaviour
     public Transform canvas;
 
     public GameObject judgeText;
+    public List<AudioClip> scaleList;
     
     // Start is called before the first frame update
     void Start()
@@ -53,11 +54,11 @@ public class JurgeNote : MonoBehaviour
             float distance = Mathf.Abs(transform.position.x - target.transform.position.x);
             if (distance < 0.1f)
             {
-                GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All);
+                GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,temp.scaleNum);
             }
             else if (distance < 0.3f)
             {
-                GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All);
+                GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All,temp.scaleNum);
             }
             else if (distance < 0.5f)
             {
@@ -69,22 +70,22 @@ public class JurgeNote : MonoBehaviour
     }
 
     [PunRPC]
-    public void PressPerfect()
+    public void PressPerfect(int scaleNum)
     {
         GetComponentInChildren<ParticleSystem>().Play();
         CreateText("Perfect");
-        audioSource.clip = perfect;
+        audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
         Destroy(target);
         Debug.Log("perfect");
     }
 
     [PunRPC]
-    public void PressGood()
+    public void PressGood(int scaleNum)
     {
         GetComponentInChildren<ParticleSystem>().Play();
         CreateText("Good");
-        audioSource.clip = good;
+        audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
         Destroy(target);
         Debug.Log("good");
@@ -145,15 +146,15 @@ public class JurgeNote : MonoBehaviour
             }
             
             float distance = Mathf.Abs(transform.position.x - target.transform.position.x);
-            if (distance < 0.1f)
+            if (distance < 0.6f)
             {
-                GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All);
+                GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,temp.scaleNum);
             }
-            else if (distance < 0.3f)
+            else if (distance < 0.8f)
             {
-                GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All);
+                GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All,temp.scaleNum);
             }
-            else if (distance < 0.5f)
+            else if (distance < 0.9f)
             {
                 GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
             }

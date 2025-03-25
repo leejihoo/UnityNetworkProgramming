@@ -10,6 +10,7 @@ public class NoteController: MonoBehaviour
 {
     public string direction;
     public int actorNumber;
+    public int scaleNum;
 
     private void OnDisable()
     {
