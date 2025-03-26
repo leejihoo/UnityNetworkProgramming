@@ -23,18 +23,36 @@ public class JurgeNote : MonoBehaviour
 
     public GameObject judgeText;
     public List<AudioClip> scaleList;
+    public Queue<GameObject> targets;
     
     // Start is called before the first frame update
     void Start()
     {
         isCanPress = false;
         audioSource = GetComponent<AudioSource>();
+        targets = new Queue<GameObject>();
         //CreateText("hello");
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (targets.Count > 0)
+        {
+            isCanPress = true;
+            // float min = 0;
+            // foreach(var cur in targets)
+            // {
+            //     float curDistance = CalculateDifferenceXPos(transform, cur.transform);
+            //     
+            // }
+
+            target = targets.Peek();
+        }
+        else
+        {
+            isCanPress = false;
+        }
         
         if (isCanPress && (Input.GetKeyDown(firstKeyCode) || Input.GetKeyDown(secondKeyCode)))
         {
@@ -52,21 +70,26 @@ public class JurgeNote : MonoBehaviour
             }
             
             float distance = Mathf.Abs(transform.position.x - target.transform.position.x);
-            if (distance < 0.1f)
+            if (distance < 0.6f)
             {
                 GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,temp.scaleNum);
             }
-            else if (distance < 0.3f)
+            else if (distance < 0.8f)
             {
                 GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All,temp.scaleNum);
             }
-            else if (distance < 0.5f)
+            else
             {
                 GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
             }
             
         }
         
+    }
+
+    public float CalculateDifferenceXPos(Transform first, Transform second)
+    {
+        return Mathf.Abs(first.position.x - second.position.x);
     }
 
     [PunRPC]
@@ -77,6 +100,7 @@ public class JurgeNote : MonoBehaviour
         audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
         Destroy(target);
+        target = null;
         Debug.Log("perfect");
     }
 
@@ -88,6 +112,7 @@ public class JurgeNote : MonoBehaviour
         audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
         Destroy(target);
+        target = null;
         Debug.Log("good");
     }
     
@@ -98,6 +123,7 @@ public class JurgeNote : MonoBehaviour
         audioSource.clip = miss;
         audioSource.Play();
         Destroy(target);
+        target = null;
         Debug.Log("miss");
     }
 
@@ -109,9 +135,11 @@ public class JurgeNote : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        isCanPress = true;
-        target = other.gameObject;
+        //isCanPress = true;
+        //target = other.gameObject;
         //Debug.Log("진입");
+        
+        targets.Enqueue(other.gameObject);
     }
 
     // private void OnTriggerStay2D(Collider2D other)
@@ -123,9 +151,10 @@ public class JurgeNote : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        isCanPress = false;
-        target = null;
+        //isCanPress = false;
+        //target = null;
         //Debug.Log("탈출");
+        targets.Dequeue();
     }
 
     public void OnTargetButtonDown(PointerEventData eventData)
@@ -154,7 +183,7 @@ public class JurgeNote : MonoBehaviour
             {
                 GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All,temp.scaleNum);
             }
-            else if (distance < 0.9f)
+            else
             {
                 GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
             }

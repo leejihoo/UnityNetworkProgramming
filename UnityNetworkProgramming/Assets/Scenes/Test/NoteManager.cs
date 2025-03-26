@@ -33,6 +33,8 @@ public class NoteManager : MonoBehaviour
     public float commonDuration;
     public float commonCreatingTime;
     public float startDelay;
+    
+    public List<NoteInfo> NoteInfosForDrum;
     void Start()
     {
         NoteInfosQueue = new Queue<NoteInfo>();
@@ -42,47 +44,85 @@ public class NoteManager : MonoBehaviour
     [PunRPC]
     void LoadNote()
     {
-        currentTime = Time.time;
-        songStartTime = Time.time;
+        
         
         int player = PhotonNetwork.CurrentRoom.PlayerCount;
-        for (int i = 0; i < NoteInfos.Count; i++)
+        // for (int i = 0; i < NoteInfos.Count; i++)
+        // {
+        //     NoteInfos[i].Duration = commonDuration;
+        //     int actorNumber = 1+ i % player;
+        //     NoteInfos[i].ActorNumber = actorNumber;
+        //     NoteInfos[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
+        //     if (i % 3 == 0)
+        //     {
+        //         for (int j = 0; j < 3; j++)
+        //         {
+        //             var temp = new NoteInfo();
+        //             temp.ActorNumber = NoteInfos[i].ActorNumber;
+        //             temp.NoteCreatingTime = NoteInfos[i].NoteCreatingTime + 0.25f * j;
+        //             temp.Duration = NoteInfos[i].Duration;
+        //             if (NoteInfos[i].DirectionNum != 1)
+        //             {
+        //                 temp.DirectionNum = 1;
+        //             }
+        //             else
+        //             {
+        //                 temp.DirectionNum = 0;
+        //             }
+        //     
+        //             temp.scaleNum = 8;
+        //             NoteInfosQueue.Enqueue(temp);
+        //         }
+        //     }
+        //     NoteInfosQueue.Enqueue(NoteInfos[i]);
+        //     
+        // }
+        
+        // 드럼
+        for (int k = 0; k < 10; k++)
         {
-            NoteInfos[i].Duration = commonDuration;
-            int actorNumber = 1+ i % player;
-            NoteInfos[i].ActorNumber = actorNumber;
-            NoteInfos[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
-            if (i % 3 == 0)
+            for (int i = 0; i < NoteInfosForDrum.Count; i++)
             {
-                var temp = new NoteInfo();
-                temp.ActorNumber = NoteInfos[i].ActorNumber;
-                temp.NoteCreatingTime = NoteInfos[i].NoteCreatingTime;
-                temp.Duration = NoteInfos[i].Duration;
-                if (NoteInfos[i].DirectionNum != 1)
-                {
-                    temp.DirectionNum = 1;
-                }
-                else
-                {
-                    temp.DirectionNum = 0;
-                }
-            
-                temp.scaleNum = 8;
+                NoteInfo temp = new NoteInfo();
+                temp.Duration= commonDuration;
+                int actorNumber = 1+ i % player;
+                temp.ActorNumber = actorNumber;
+                temp.NoteCreatingTime = (i + 1) * commonCreatingTime + k * commonCreatingTime * NoteInfosForDrum.Count;
+                temp.scaleNum = NoteInfosForDrum[i].scaleNum;
+                temp.DirectionNum = NoteInfosForDrum[i].DirectionNum;
+                //Debug.Log(NoteInfosForDrum[i].NoteCreatingTime);
                 NoteInfosQueue.Enqueue(temp);
             }
-            NoteInfosQueue.Enqueue(NoteInfos[i]);
-            
         }
+        
+        currentTime = Time.time;
+        songStartTime = Time.time;
+        //Debug.Log("cur:" + currentTime);
+        
+        
+        // for (int i = 0; i < NoteInfosForDrum.Count; i++)
+        // {
+        //     NoteInfosForDrum[i].Duration = commonDuration;
+        //     int actorNumber = 1+ i % player;
+        //     NoteInfosForDrum[i].ActorNumber = actorNumber;
+        //     NoteInfosForDrum[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
+        //     NoteInfosQueue.Enqueue(NoteInfosForDrum[i]);
+        // }
     }
 
     // Update is called once per frame
     void Update()
     {
         currentTime += Time.deltaTime; // 경과 시간 계산
-
+        // if (NoteInfosQueue.Count > 0)
+        // {
+        //     Debug.Log("NoteInfosQueue.Peek().NoteCreatingTime + songStartTime: " + NoteInfosQueue.Peek().NoteCreatingTime + songStartTime);
+        //     Debug.Log("currentTime: " + currentTime);
+        // }
+        
         while (NoteInfosQueue.Count > 0 && NoteInfosQueue.Peek().NoteCreatingTime + songStartTime <= currentTime)
         {
-            Debug.Log("currentTime: " + currentTime);
+            //Debug.Log("currentTime: " + currentTime);
             SpawnNote(NoteInfosQueue.Dequeue());
         }
     }
