@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -24,14 +26,37 @@ public class JurgeNote : MonoBehaviour
     public GameObject judgeText;
     public List<AudioClip> scaleList;
     public Queue<GameObject> targets;
+    public HashSet<int> destroyedNoteID;
+
+    public TMP_Text perfectText;
+    public TMP_Text goodText;
+    public TMP_Text missText;
+    public static int perfectCount;
+    public static int goodCount;
+    public static int missCount;
+
+    public void ResetCount()
+    {
+        perfectCount = 0;
+        goodCount = 0;
+        missCount = 0;
+        perfectText.text = "perfect: 0";
+        goodText.text = "good: 0";
+        missText.text = "miss: 0";
+    }
     
     // Start is called before the first frame update
     void Start()
     {
+        perfectText = GameObject.Find("Perfect").GetComponent<TMP_Text>();
+        goodText = GameObject.Find("Good").GetComponent<TMP_Text>();
+        missText = GameObject.Find("Miss").GetComponent<TMP_Text>();
+        
         isCanPress = false;
         audioSource = GetComponent<AudioSource>();
         targets = new Queue<GameObject>();
         //CreateText("hello");
+        destroyedNoteID = new HashSet<int>();
     }
 
     // Update is called once per frame
@@ -66,6 +91,7 @@ public class JurgeNote : MonoBehaviour
             
             if (temp.actorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
             {
+                GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
                 return;
             }
             
@@ -95,18 +121,58 @@ public class JurgeNote : MonoBehaviour
     [PunRPC]
     public void PressPerfect(int scaleNum)
     {
+        //Debug.Log("pressP");
+        if (PhotonNetwork.IsMasterClient && target != null)
+        {
+            GetComponent<PhotonView>().RPC("PressPerfectInMasterClient",RpcTarget.All,scaleNum);
+        }
+    }
+    
+    [PunRPC]
+    public void PressPerfectInMasterClient(int scaleNum)
+    {
+        
+        if (target == null || destroyedNoteID.Contains(target.GetComponent<NoteController>().NoteID))
+        {
+            return;
+        }
+
+        perfectCount++;
+        perfectText.text = $"perfect: {perfectCount}"; 
         GetComponentInChildren<ParticleSystem>().Play();
         CreateText("Perfect");
         audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
+        destroyedNoteID.Add(target.GetComponent<NoteController>().NoteID);
         Destroy(target);
         target = null;
-        Debug.Log("perfect");
+        //Debug.Log("perfect");
+        foreach (var temp in destroyedNoteID)
+        {
+            Debug.Log(temp);
+        }
     }
 
     [PunRPC]
     public void PressGood(int scaleNum)
     {
+        if (PhotonNetwork.IsMasterClient && target != null)
+        {
+            GetComponent<PhotonView>().RPC("PressGoodInMasterClient",RpcTarget.All,scaleNum);
+        }
+    }
+
+    [PunRPC]
+    public void PressGoodInMasterClient(int scaleNum)
+    {
+        if (target == null || destroyedNoteID.Contains(target.GetComponent<NoteController>().NoteID))
+        {
+            return;
+        }
+        
+        goodCount++;
+        goodText.text = $"good: {goodCount}"; 
+        
         GetComponentInChildren<ParticleSystem>().Play();
         CreateText("Good");
         audioSource.clip = scaleList[scaleNum];
@@ -119,6 +185,22 @@ public class JurgeNote : MonoBehaviour
     [PunRPC]
     public void PressMiss()
     {
+        if (PhotonNetwork.IsMasterClient && target != null)
+        {
+            GetComponent<PhotonView>().RPC("PressMissInMasterClient",RpcTarget.All);
+        }
+    }
+
+    [PunRPC]
+    public void PressMissInMasterClient()
+    {
+        if (target == null || destroyedNoteID.Contains(target.GetComponent<NoteController>().NoteID))
+        {
+            return;
+        }
+        missCount++;
+        missText.text = $"miss: {missCount}"; 
+        
         CreateText("Miss");
         audioSource.clip = miss;
         audioSource.Play();

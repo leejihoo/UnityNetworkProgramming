@@ -44,70 +44,71 @@ public class NoteManager : MonoBehaviour
     [PunRPC]
     void LoadNote()
     {
-        
-        
-        int player = PhotonNetwork.CurrentRoom.PlayerCount;
-        // for (int i = 0; i < NoteInfos.Count; i++)
-        // {
-        //     NoteInfos[i].Duration = commonDuration;
-        //     int actorNumber = 1+ i % player;
-        //     NoteInfos[i].ActorNumber = actorNumber;
-        //     NoteInfos[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
-        //     if (i % 3 == 0)
-        //     {
-        //         for (int j = 0; j < 3; j++)
-        //         {
-        //             var temp = new NoteInfo();
-        //             temp.ActorNumber = NoteInfos[i].ActorNumber;
-        //             temp.NoteCreatingTime = NoteInfos[i].NoteCreatingTime + 0.25f * j;
-        //             temp.Duration = NoteInfos[i].Duration;
-        //             if (NoteInfos[i].DirectionNum != 1)
-        //             {
-        //                 temp.DirectionNum = 1;
-        //             }
-        //             else
-        //             {
-        //                 temp.DirectionNum = 0;
-        //             }
-        //     
-        //             temp.scaleNum = 8;
-        //             NoteInfosQueue.Enqueue(temp);
-        //         }
-        //     }
-        //     NoteInfosQueue.Enqueue(NoteInfos[i]);
-        //     
-        // }
-        
-        // 드럼
-        for (int k = 0; k < 10; k++)
-        {
-            for (int i = 0; i < NoteInfosForDrum.Count; i++)
-            {
-                NoteInfo temp = new NoteInfo();
-                temp.Duration= commonDuration;
-                int actorNumber = 1+ i % player;
-                temp.ActorNumber = actorNumber;
-                temp.NoteCreatingTime = (i + 1) * commonCreatingTime + k * commonCreatingTime * NoteInfosForDrum.Count;
-                temp.scaleNum = NoteInfosForDrum[i].scaleNum;
-                temp.DirectionNum = NoteInfosForDrum[i].DirectionNum;
-                //Debug.Log(NoteInfosForDrum[i].NoteCreatingTime);
-                NoteInfosQueue.Enqueue(temp);
-            }
-        }
+        leftEnd.gameObject.GetComponent<JurgeNote>().destroyedNoteID.Clear();
+        rightEnd.gameObject.GetComponent<JurgeNote>().destroyedNoteID.Clear();
+        jumpEnd.gameObject.GetComponent<JurgeNote>().destroyedNoteID.Clear();
+        leftEnd.gameObject.GetComponent<JurgeNote>().ResetCount();
+        rightEnd.gameObject.GetComponent<JurgeNote>().ResetCount();
+        jumpEnd.gameObject.GetComponent<JurgeNote>().ResetCount();
         
         currentTime = Time.time;
         songStartTime = Time.time;
-        //Debug.Log("cur:" + currentTime);
         
+        int player = PhotonNetwork.CurrentRoom.PlayerCount;
+        for (int i = 0; i < NoteInfos.Count; i++)
+        {
+            NoteInfos[i].Duration = commonDuration;
+            int actorNumber = 1+ i % player;
+            NoteInfos[i].ActorNumber = actorNumber;
+            NoteInfos[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
+            // if (i % 3 == 0)
+            // {
+            //     for (int j = 0; j < 3; j++)
+            //     {
+            //         var temp = new NoteInfo();
+            //         temp.ActorNumber = NoteInfos[i].ActorNumber;
+            //         temp.NoteCreatingTime = NoteInfos[i].NoteCreatingTime + 0.25f * j;
+            //         temp.Duration = NoteInfos[i].Duration;
+            //         if (NoteInfos[i].DirectionNum != 1)
+            //         {
+            //             temp.DirectionNum = 1;
+            //         }
+            //         else
+            //         {
+            //             temp.DirectionNum = 0;
+            //         }
+            //
+            //         temp.scaleNum = 8;
+            //         NoteInfosQueue.Enqueue(temp);
+            //     }
+            // }
+            NoteInfos[i].NoteID = i;
+            NoteInfosQueue.Enqueue(NoteInfos[i]);
+            
+        }
         
-        // for (int i = 0; i < NoteInfosForDrum.Count; i++)
+        // 드럼
+        // float delay = 0.5f;
+        // for (int k = 0; k < 10; k++)
         // {
-        //     NoteInfosForDrum[i].Duration = commonDuration;
-        //     int actorNumber = 1+ i % player;
-        //     NoteInfosForDrum[i].ActorNumber = actorNumber;
-        //     NoteInfosForDrum[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
-        //     NoteInfosQueue.Enqueue(NoteInfosForDrum[i]);
+        //     for (int i = 0; i < NoteInfosForDrum.Count; i++)
+        //     {
+        //         NoteInfo temp = new NoteInfo();
+        //         temp.Duration= commonDuration;
+        //         int actorNumber = 1+ i % player;
+        //         temp.ActorNumber = actorNumber;
+        //         temp.NoteCreatingTime =(i + 1) * commonCreatingTime + k * commonCreatingTime * NoteInfosForDrum.Count + k * delay;
+        //         temp.scaleNum = NoteInfosForDrum[i].scaleNum;
+        //         temp.DirectionNum = NoteInfosForDrum[i].DirectionNum;
+        //         temp.NoteID = i + k * NoteInfosForDrum.Count;
+        //         //Debug.Log(NoteInfosForDrum[i].NoteCreatingTime);
+        //         NoteInfosQueue.Enqueue(temp);
+        //     }
+        //     
         // }
+        
+
+        //Debug.Log("cur:" + currentTime);
     }
 
     // Update is called once per frame
@@ -129,7 +130,7 @@ public class NoteManager : MonoBehaviour
     
     void SpawnNote(NoteInfo note)
     {
-        CreateNote2(note.ActorNumber, note.DirectionNum,note.Duration,note.scaleNum);
+        CreateNote2(note.ActorNumber, note.DirectionNum,note.Duration,note.scaleNum,note.NoteID);
     }
 
     public void OnClickStartButton()
@@ -229,13 +230,14 @@ public class NoteManager : MonoBehaviour
         }
     }
     
-    public void CreateNote2(int randomActorNumber, int randomNum, float duration, int scaleNum)
+    public void CreateNote2(int randomActorNumber, int randomNum, float duration, int scaleNum, int noteID)
     {
         GameObject newNote = Instantiate(Note);
             
         //int randomActorNumber = 1;
         newNote.GetComponent<NoteController>().actorNumber = randomActorNumber;
         newNote.GetComponent<NoteController>().scaleNum = scaleNum;
+        newNote.GetComponent<NoteController>().NoteID = noteID;
         
         if (randomActorNumber == 1)
         {
@@ -288,4 +290,5 @@ public class NoteInfo
     public int DirectionNum;
     //  0~7 도~ 높은 도
     public int scaleNum;
+    public int NoteID;
 }

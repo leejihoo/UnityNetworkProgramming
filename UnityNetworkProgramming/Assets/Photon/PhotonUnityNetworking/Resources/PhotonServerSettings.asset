@@ -47,6 +47,9 @@ MonoBehaviour:
   - PressMiss
   - PressPerfect
   - LoadNote
+  - PressPerfectInMasterClient
+  - PressGoodInMasterClient
+  - PressMissInMasterClient
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
