@@ -12,7 +12,12 @@ public class NoteController: MonoBehaviour
     public int actorNumber;
     public int scaleNum;
     public int NoteID;
+
+    public Transform front;
+    public Transform end;
     
+    // 0은 단타, 1이 롱노트
+    public int NoteType;
     private void OnDisable()
     {
         DOTween.Kill(transform);

@@ -663,150 +663,175 @@ MonoBehaviour:
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 1
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 1.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 0
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 2
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 2.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 4
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 4
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 0
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 0
     NoteID: 0
+    NoteType: 0
   BG: {fileID: 683202957}
   commonDuration: 3.5
   commonCreatingTime: 0.4
@@ -818,18 +843,22 @@ MonoBehaviour:
     DirectionNum: 1
     scaleNum: 10
     NoteID: 0
+    NoteType: 1
   - Duration: 0
     NoteCreatingTime: 0
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 10
     NoteID: 0
+    NoteType: 1
   - Duration: 0
     NoteCreatingTime: 0
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 9
     NoteID: 0
+    NoteType: 1
+  LongNote: {fileID: 3274062215475665521, guid: 5a438e8eb26d387499c53a2c314cfb3e, type: 3}
 --- !u!4 &343493909
 Transform:
   m_ObjectHideFlags: 0
@@ -2782,7 +2811,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6752674604776488837, guid: 12029bb94bd20e040bdb693017e3b4f8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9
+      value: -12.57
       objectReference: {fileID: 0}
     - target: {fileID: 6752674604776488837, guid: 12029bb94bd20e040bdb693017e3b4f8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3294,7 +3323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7398760266336927839, guid: 5e16f34be2a939c4f8953768a809c4ea, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9
+      value: -12.57
       objectReference: {fileID: 0}
     - target: {fileID: 7398760266336927839, guid: 5e16f34be2a939c4f8953768a809c4ea, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3679,7 +3708,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7785320897468667306, guid: 316d67791e3554c4dbd2a148d5df192c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9
+      value: -12.57
       objectReference: {fileID: 0}
     - target: {fileID: 7785320897468667306, guid: 316d67791e3554c4dbd2a148d5df192c, type: 3}
       propertyPath: m_LocalPosition.y

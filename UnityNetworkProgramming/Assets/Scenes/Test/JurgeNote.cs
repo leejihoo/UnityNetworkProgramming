@@ -35,6 +35,8 @@ public class JurgeNote : MonoBehaviour
     public static int goodCount;
     public static int missCount;
 
+    private bool isHolding;
+
     public void ResetCount()
     {
         perfectCount = 0;
@@ -78,6 +80,11 @@ public class JurgeNote : MonoBehaviour
         {
             isCanPress = false;
         }
+
+        if (isHolding)
+        {
+            return;
+        }
         
         if (isCanPress && (Input.GetKeyDown(firstKeyCode) || Input.GetKeyDown(secondKeyCode)))
         {
@@ -95,7 +102,24 @@ public class JurgeNote : MonoBehaviour
                 return;
             }
             
+            
+            if (temp.NoteType == 1)
+            {
+                float distance2 = Mathf.Abs(transform.position.x - target.GetComponent<NoteController>().front.position.x);
+                
+                if (distance2 < 0.8f)
+                {
+                    isHolding = true;
+                    return;
+                }
+                
+                Debug.Log("설마여기?");
+                GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
+                return;
+            }
+            
             float distance = Mathf.Abs(transform.position.x - target.transform.position.x);
+            
             if (distance < 0.6f)
             {
                 GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,temp.scaleNum);
@@ -224,15 +248,39 @@ public class JurgeNote : MonoBehaviour
         targets.Enqueue(other.gameObject);
     }
 
-    // private void OnTriggerStay2D(Collider2D other)
-    // {
-    //     float distance = Mathf.Abs(transform.position.x - target.transform.position.x);
-    //     //Debug.Log("distance: " + distance);
-    //     
-    // }
+    private bool isExecuteRPC = false;
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            Debug.Log("OnTriggerStay2D 지나감");
+            isHolding = false;
+        }
+        
+        if (!isHolding && !isExecuteRPC)
+        {
+            Debug.Log("!isHolding && !isExecuteRPC");
+            isExecuteRPC = true;
+            GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
+        }
+        
+        if (isHolding)
+        {
+            GetComponentInChildren<ParticleSystem>().Play();
+        }
+        
+        
+    }
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (isHolding)
+        {
+            isHolding = false;
+            isExecuteRPC = false;
+            GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,7);
+        }
+        
         //isCanPress = false;
         //target = null;
         //Debug.Log("탈출");
