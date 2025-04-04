@@ -4,23 +4,18 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-public class UIInterative : MonoBehaviour, IPointerDownHandler
+public class UIInterative : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public UnityEvent<PointerEventData> buttonOnPointerDown;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public UnityEvent<PointerEventData> buttonOnPointerUp;
 
     public void OnPointerDown(PointerEventData eventData)
     {
         buttonOnPointerDown.Invoke(eventData);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        buttonOnPointerUp.Invoke(eventData);
     }
 }

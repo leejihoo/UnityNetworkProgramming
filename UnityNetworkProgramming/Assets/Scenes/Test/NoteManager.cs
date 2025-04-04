@@ -35,6 +35,8 @@ public class NoteManager : MonoBehaviour
     public float startDelay;
     
     public List<NoteInfo> NoteInfosForDrum;
+    public GameObject LongNote;
+    
     void Start()
     {
         NoteInfosQueue = new Queue<NoteInfo>();
@@ -55,37 +57,37 @@ public class NoteManager : MonoBehaviour
         songStartTime = Time.time;
         
         int player = PhotonNetwork.CurrentRoom.PlayerCount;
-        for (int i = 0; i < NoteInfos.Count; i++)
-        {
-            NoteInfos[i].Duration = commonDuration;
-            int actorNumber = 1+ i % player;
-            NoteInfos[i].ActorNumber = actorNumber;
-            NoteInfos[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
-            // if (i % 3 == 0)
-            // {
-            //     for (int j = 0; j < 3; j++)
-            //     {
-            //         var temp = new NoteInfo();
-            //         temp.ActorNumber = NoteInfos[i].ActorNumber;
-            //         temp.NoteCreatingTime = NoteInfos[i].NoteCreatingTime + 0.25f * j;
-            //         temp.Duration = NoteInfos[i].Duration;
-            //         if (NoteInfos[i].DirectionNum != 1)
-            //         {
-            //             temp.DirectionNum = 1;
-            //         }
-            //         else
-            //         {
-            //             temp.DirectionNum = 0;
-            //         }
-            //
-            //         temp.scaleNum = 8;
-            //         NoteInfosQueue.Enqueue(temp);
-            //     }
-            // }
-            NoteInfos[i].NoteID = i;
-            NoteInfosQueue.Enqueue(NoteInfos[i]);
-            
-        }
+        // for (int i = 0; i < NoteInfos.Count; i++)
+        // {
+        //     NoteInfos[i].Duration = commonDuration;
+        //     int actorNumber = 1+ i % player;
+        //     NoteInfos[i].ActorNumber = actorNumber;
+        //     NoteInfos[i].NoteCreatingTime = (i + 1) * commonCreatingTime;
+        //     // if (i % 3 == 0)
+        //     // {
+        //     //     for (int j = 0; j < 3; j++)
+        //     //     {
+        //     //         var temp = new NoteInfo();
+        //     //         temp.ActorNumber = NoteInfos[i].ActorNumber;
+        //     //         temp.NoteCreatingTime = NoteInfos[i].NoteCreatingTime + 0.25f * j;
+        //     //         temp.Duration = NoteInfos[i].Duration;
+        //     //         if (NoteInfos[i].DirectionNum != 1)
+        //     //         {
+        //     //             temp.DirectionNum = 1;
+        //     //         }
+        //     //         else
+        //     //         {
+        //     //             temp.DirectionNum = 0;
+        //     //         }
+        //     //
+        //     //         temp.scaleNum = 8;
+        //     //         NoteInfosQueue.Enqueue(temp);
+        //     //     }
+        //     // }
+        //     NoteInfos[i].NoteID = i;
+        //     NoteInfosQueue.Enqueue(NoteInfos[i]);
+        //     
+        // }
         
         // 드럼
         // float delay = 0.5f;
@@ -106,6 +108,21 @@ public class NoteManager : MonoBehaviour
         //     }
         //     
         // }
+        
+        // 롱노트 테스트
+        for (int i = 0; i < NoteInfosForDrum.Count; i++)
+        {
+            NoteInfo temp = new NoteInfo();
+            temp.Duration= commonDuration;
+            int actorNumber = 1+ i % player;
+            temp.ActorNumber = actorNumber;
+            temp.NoteCreatingTime =(i + 1) * commonCreatingTime;
+            temp.scaleNum = NoteInfosForDrum[i].scaleNum;
+            temp.DirectionNum = NoteInfosForDrum[i].DirectionNum;
+            temp.NoteID = i;
+            //Debug.Log(NoteInfosForDrum[i].NoteCreatingTime);
+            NoteInfosQueue.Enqueue(temp);
+        }
         
 
         //Debug.Log("cur:" + currentTime);
@@ -232,7 +249,8 @@ public class NoteManager : MonoBehaviour
     
     public void CreateNote2(int randomActorNumber, int randomNum, float duration, int scaleNum, int noteID)
     {
-        GameObject newNote = Instantiate(Note);
+        //GameObject newNote = Instantiate(Note);
+        GameObject newNote = Instantiate(LongNote);
             
         //int randomActorNumber = 1;
         newNote.GetComponent<NoteController>().actorNumber = randomActorNumber;
@@ -260,20 +278,21 @@ public class NoteManager : MonoBehaviour
         {
             newNote.GetComponent<SpriteRenderer>().sprite = arrow;
             newNote.transform.position = leftStart.transform.position;
-            newNote.transform.DOMove(leftEnd.position - new Vector3(3, 0, 0), duration).SetEase(Ease.Linear).OnComplete(() => Destroy(newNote));
+            //.OnComplete(() => Destroy(newNote))
+            newNote.transform.DOMove(leftEnd.position - new Vector3(12, 0, 0), duration).SetEase(Ease.Linear);
         }
         else if (randomNum == 1)
         {
             newNote.transform.localScale = Vector3.one;
             newNote.transform.position = jumpStart.transform.position;
-            newNote.transform.DOMove(jumpEnd.position - new Vector3(3,0,0), duration).SetEase(Ease.Linear).OnComplete(() => Destroy(newNote));
+            newNote.transform.DOMove(jumpEnd.position - new Vector3(12,0,0), duration).SetEase(Ease.Linear);
         }
         else
         {
             newNote.GetComponent<SpriteRenderer>().sprite = arrow;
             newNote.transform.Rotate(Vector3.forward,-180f);
             newNote.transform.position = rightStart.transform.position;
-            newNote.transform.DOMove(rightEnd.position - new Vector3(3,0,0), duration).SetEase(Ease.Linear).OnComplete(() => Destroy(newNote));
+            newNote.transform.DOMove(rightEnd.position - new Vector3(12,0,0), duration).SetEase(Ease.Linear);
         }
     }
     

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Photon.Pun;
 using TMPro;
 using UnityEditor;
@@ -35,6 +36,9 @@ public class JurgeNote : MonoBehaviour
     public static int goodCount;
     public static int missCount;
 
+    public bool isHoding;
+    public bool isTailEnter;
+    
     public void ResetCount()
     {
         perfectCount = 0;
@@ -144,13 +148,21 @@ public class JurgeNote : MonoBehaviour
         audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
         destroyedNoteID.Add(target.GetComponent<NoteController>().NoteID);
-        Destroy(target);
+        if (target.GetComponent<NoteController>().NoteType == 0 || target.GetComponent<NoteController>().NoteType == 1)
+        {
+            Destroy(target);
+        }
+        else // 롱노트일 경우 부모 파괴
+        {
+            Destroy(target.transform.parent.gameObject);
+        }
+        
         target = null;
         //Debug.Log("perfect");
-        foreach (var temp in destroyedNoteID)
-        {
-            Debug.Log(temp);
-        }
+        // foreach (var temp in destroyedNoteID)
+        // {
+        //     Debug.Log(temp);
+        // }
     }
 
     [PunRPC]
@@ -185,6 +197,7 @@ public class JurgeNote : MonoBehaviour
     [PunRPC]
     public void PressMiss()
     {
+        Debug.Log("PressMiss RPC 함수 스레드: " + Thread.CurrentThread.ManagedThreadId);
         if (PhotonNetwork.IsMasterClient && target != null)
         {
             GetComponent<PhotonView>().RPC("PressMissInMasterClient",RpcTarget.All);
@@ -204,7 +217,15 @@ public class JurgeNote : MonoBehaviour
         CreateText("Miss");
         audioSource.clip = miss;
         audioSource.Play();
-        Destroy(target);
+        if (target.GetComponent<NoteController>().NoteType == 0 || target.GetComponent<NoteController>().NoteType == 1)
+        {
+            Destroy(target);
+        }
+        else
+        {
+            Destroy(target.transform.parent.gameObject);
+        }
+        
         target = null;
         Debug.Log("miss");
     }
@@ -220,8 +241,16 @@ public class JurgeNote : MonoBehaviour
         //isCanPress = true;
         //target = other.gameObject;
         //Debug.Log("진입");
+        var targetNoteType = other.GetComponent<NoteController>().NoteType;
+        if ( targetNoteType == 0 || targetNoteType == 1)
+        {
+            targets.Enqueue(other.gameObject);
+        }
+        else // 롱노트 끝에 닿았다면
+        {
+            isTailEnter = true;
+        }
         
-        targets.Enqueue(other.gameObject);
     }
 
     // private void OnTriggerStay2D(Collider2D other)
@@ -233,10 +262,30 @@ public class JurgeNote : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        Debug.Log("OnTriggerExit2D 함수 스레드: " + Thread.CurrentThread.ManagedThreadId);
         //isCanPress = false;
         //target = null;
         //Debug.Log("탈출");
+        var targetNoteType = other.GetComponent<NoteController>().NoteType;
+        
+        if(targetNoteType == 2 && isTailEnter) // 롱노트 끝에서 나갔다면
+        {
+            isTailEnter = false;
+            GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,target.GetComponent<NoteController>().scaleNum);
+        }
+        else if (targetNoteType == 1)
+        {
+            if (isHoding || targets.Count == 0)
+            {
+                return;
+            }
+            
+            isTailEnter = false;
+            GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
+        }
+        Debug.Log("OnTriggerExit2D");
         targets.Dequeue();
+        Debug.Log("OnTriggerExit2D, " + "targets.count: " + targets.Count);
     }
 
     public void OnTargetButtonDown(PointerEventData eventData)
@@ -259,17 +308,55 @@ public class JurgeNote : MonoBehaviour
             float distance = Mathf.Abs(transform.position.x - target.transform.position.x);
             if (distance < 0.6f)
             {
-                GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,temp.scaleNum);
+                if (temp.NoteType == 0)
+                {
+                    GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,temp.scaleNum);
+                }
+                else if(temp.NoteType == 1)
+                {
+                    isHoding = true;
+                }
+                
             }
             else if (distance < 0.8f)
             {
-                GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All,temp.scaleNum);
+                if (temp.NoteType == 0)
+                {
+                    GetComponent<PhotonView>().RPC("PressGood",RpcTarget.All,temp.scaleNum);
+                }
+                else if (temp.NoteType == 1)
+                {
+                    isHoding = true;
+                }
             }
             else
             {
                 GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
             }
             
+        }
+    }
+
+    public void OnTargetButtonUp(PointerEventData eventData)
+    {
+        isHoding = false;
+        Debug.Log("OnTargetButtonUp: " + Thread.CurrentThread.ManagedThreadId);
+        Debug.Log("OnTargetButtonUp1111, " + "targets.Count: " + targets.Count);
+        if (target == null || targets.Count == 0)
+        {
+            return;
+        }
+        
+        if (isTailEnter)
+        {
+            GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,target.GetComponent<NoteController>().scaleNum);
+            isTailEnter = false;
+        }
+        else
+        {
+            targets.Dequeue();
+            GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
+            Debug.Log("OnTargetButtonUp, " + "targets.Count: " + targets.Count);
         }
     }
 }

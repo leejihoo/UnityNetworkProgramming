@@ -12,6 +12,8 @@ public class NoteController: MonoBehaviour
     public int actorNumber;
     public int scaleNum;
     public int NoteID;
+    // shoteNote, longNoteHead, longNoteTail 0,1,2
+    public int NoteType;
     
     private void OnDisable()
     {
