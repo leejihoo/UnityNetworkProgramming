@@ -38,6 +38,7 @@ public class JurgeNote : MonoBehaviour
 
     public bool isHoding;
     public bool isTailEnter;
+    private bool _isProcessMiss;
     
     public void ResetCount()
     {
@@ -267,6 +268,10 @@ public class JurgeNote : MonoBehaviour
         //target = null;
         //Debug.Log("탈출");
         var targetNoteType = other.GetComponent<NoteController>().NoteType;
+        if (other.GetComponent<NoteController>().actorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            return;
+        }
         
         if(targetNoteType == 2 && isTailEnter) // 롱노트 끝에서 나갔다면
         {
@@ -275,7 +280,7 @@ public class JurgeNote : MonoBehaviour
         }
         else if (targetNoteType == 1)
         {
-            if (isHoding || targets.Count == 0)
+            if (isHoding || targets.Count == 0 || _isProcessMiss)
             {
                 return;
             }
@@ -354,9 +359,11 @@ public class JurgeNote : MonoBehaviour
         }
         else
         {
+            _isProcessMiss = true;
             targets.Dequeue();
             GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
             Debug.Log("OnTargetButtonUp, " + "targets.Count: " + targets.Count);
+            _isProcessMiss = false;
         }
     }
 }
