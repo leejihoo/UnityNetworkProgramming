@@ -663,173 +663,348 @@ MonoBehaviour:
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 1
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 1.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 0
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 2
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 2.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 4
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 4
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 0
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 0
     scaleNum: 2
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 2
     scaleNum: 1
     NoteID: 0
+    NoteType: 0
   - Duration: 4
     NoteCreatingTime: 3.5
     ActorNumber: 0
     DirectionNum: 1
     scaleNum: 0
     NoteID: 0
+    NoteType: 0
   BG: {fileID: 683202957}
   commonDuration: 6
-  commonCreatingTime: 2
+  commonCreatingTime: 2.5
   startDelay: 3.5
   NoteInfosForDrum:
   - Duration: 0
     NoteCreatingTime: 0
     ActorNumber: 0
-    DirectionNum: 1
-    scaleNum: 10
+    DirectionNum: 2
+    scaleNum: 0
     NoteID: 0
+    NoteType: 1
   - Duration: 0
     NoteCreatingTime: 0
     ActorNumber: 0
     DirectionNum: 1
-    scaleNum: 10
+    scaleNum: 4
     NoteID: 0
+    NoteType: 1
   - Duration: 0
     NoteCreatingTime: 0
     ActorNumber: 0
     DirectionNum: 0
-    scaleNum: 9
+    scaleNum: 5
     NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 0
+    scaleNum: 4
+    NoteID: 0
+    NoteType: 0
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 0
+    scaleNum: 3
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 2
+    scaleNum: 2
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 1
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 0
+    NoteID: 0
+    NoteType: 0
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 2
+    scaleNum: 4
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 3
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 0
+    scaleNum: 2
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 2
+    scaleNum: 1
+    NoteID: 0
+    NoteType: 0
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 0
+    scaleNum: 4
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 2
+    scaleNum: 3
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 2
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 1
+    NoteID: 0
+    NoteType: 0
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 0
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 2
+    scaleNum: 4
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 5
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 4
+    NoteID: 0
+    NoteType: 0
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 0
+    scaleNum: 3
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 2
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 2
+    scaleNum: 1
+    NoteID: 0
+    NoteType: 1
+  - Duration: 0
+    NoteCreatingTime: 0
+    ActorNumber: 0
+    DirectionNum: 1
+    scaleNum: 0
+    NoteID: 0
+    NoteType: 0
   LongNote: {fileID: 3844375541379897512, guid: 67cb670178e54724498735eccccb7ab5, type: 3}
 --- !u!4 &343493909
 Transform:

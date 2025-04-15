@@ -110,6 +110,7 @@ public class NoteManager : MonoBehaviour
         // }
         
         // 롱노트 테스트
+        //
         for (int i = 0; i < NoteInfosForDrum.Count; i++)
         {
             NoteInfo temp = new NoteInfo();
@@ -120,6 +121,7 @@ public class NoteManager : MonoBehaviour
             temp.scaleNum = NoteInfosForDrum[i].scaleNum;
             temp.DirectionNum = NoteInfosForDrum[i].DirectionNum;
             temp.NoteID = i;
+            temp.NoteType = NoteInfosForDrum[i].NoteType;
             //Debug.Log(NoteInfosForDrum[i].NoteCreatingTime);
             NoteInfosQueue.Enqueue(temp);
         }
@@ -147,7 +149,7 @@ public class NoteManager : MonoBehaviour
     
     void SpawnNote(NoteInfo note)
     {
-        CreateNote2(note.ActorNumber, note.DirectionNum,note.Duration,note.scaleNum,note.NoteID);
+        CreateNote2(note);
     }
 
     public void OnClickStartButton()
@@ -247,52 +249,63 @@ public class NoteManager : MonoBehaviour
         }
     }
     
-    public void CreateNote2(int randomActorNumber, int randomNum, float duration, int scaleNum, int noteID)
+    public void CreateNote2(NoteInfo noteInfo)
     {
+        GameObject newNote = null;
         //GameObject newNote = Instantiate(Note);
-        GameObject newNote = Instantiate(LongNote);
-            
-        //int randomActorNumber = 1;
-        newNote.GetComponent<NoteController>().actorNumber = randomActorNumber;
-        newNote.GetComponent<NoteController>().scaleNum = scaleNum;
-        newNote.GetComponent<NoteController>().NoteID = noteID;
+        if (noteInfo.NoteType == 0)
+        {
+            newNote = Instantiate(Note);
+        }
+        else
+        {
+            newNote = Instantiate(LongNote);
+            newNote.transform.GetChild(1).GetComponent<NoteController>().actorNumber = noteInfo.ActorNumber;
+        }
         
-        if (randomActorNumber == 1)
+        //int randomActorNumber = 1;
+        newNote.GetComponent<NoteController>().actorNumber = noteInfo.ActorNumber;
+        newNote.GetComponent<NoteController>().scaleNum = noteInfo.scaleNum;
+        newNote.GetComponent<NoteController>().NoteID = noteInfo.NoteID;
+        newNote.GetComponent<NoteController>().direction = noteInfo.DirectionNum.ToString();
+        
+        if (noteInfo.ActorNumber == 1)
         {
             newNote.GetComponent<SpriteRenderer>().color = Color.red;
         }
-        else if (randomActorNumber == 2)
+        else if (noteInfo.ActorNumber == 2)
         {
             newNote.GetComponent<SpriteRenderer>().color = Color.yellow;
         }
-        else if (randomActorNumber == 3)
+        else if (noteInfo.ActorNumber == 3)
         {
             newNote.GetComponent<SpriteRenderer>().color = Color.blue;
         }
-        else if (randomActorNumber == 4)
+        else if (noteInfo.ActorNumber == 4)
         {
             newNote.GetComponent<SpriteRenderer>().color = Color.green;
         }
             
-        if (randomNum == 0)
+        if (noteInfo.DirectionNum == 0)
         {
             newNote.GetComponent<SpriteRenderer>().sprite = arrow;
             newNote.transform.position = leftStart.transform.position;
             //.OnComplete(() => Destroy(newNote))
-            newNote.transform.DOMove(leftEnd.position - new Vector3(12, 0, 0), duration).SetEase(Ease.Linear);
+            newNote.transform.DOMove(leftEnd.position - new Vector3(12, 0, 0), noteInfo.Duration).SetEase(Ease.Linear);
         }
-        else if (randomNum == 1)
+        else if (noteInfo.DirectionNum == 1)
         {
             newNote.transform.localScale = Vector3.one;
             newNote.transform.position = jumpStart.transform.position;
-            newNote.transform.DOMove(jumpEnd.position - new Vector3(12,0,0), duration).SetEase(Ease.Linear);
+            newNote.transform.DOMove(jumpEnd.position - new Vector3(12,0,0), noteInfo.Duration).SetEase(Ease.Linear);
         }
         else
         {
             newNote.GetComponent<SpriteRenderer>().sprite = arrow;
-            newNote.transform.Rotate(Vector3.forward,-180f);
+            // 롱노트를 회전시키면 문제가 생김. 꼬리랑 머리랑 위치가 바뀐다.
+            //newNote.transform.Rotate(Vector3.forward,-180f);
             newNote.transform.position = rightStart.transform.position;
-            newNote.transform.DOMove(rightEnd.position - new Vector3(12,0,0), duration).SetEase(Ease.Linear);
+            newNote.transform.DOMove(rightEnd.position - new Vector3(12,0,0), noteInfo.Duration).SetEase(Ease.Linear);
         }
     }
     
@@ -310,4 +323,6 @@ public class NoteInfo
     //  0~7 도~ 높은 도
     public int scaleNum;
     public int NoteID;
+    // shoteNote, longNoteHead, longNoteTail 0,1,2
+    public int NoteType;
 }

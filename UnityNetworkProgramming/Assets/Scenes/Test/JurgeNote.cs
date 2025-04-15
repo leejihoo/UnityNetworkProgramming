@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using DG.Tweening;
 using Photon.Pun;
 using TMPro;
 using UnityEditor;
@@ -83,6 +84,12 @@ public class JurgeNote : MonoBehaviour
         {
             isCanPress = false;
         }
+
+        if (isHoding && !GetComponentInChildren<ParticleSystem>().isPlaying)
+        {
+            GetComponentInChildren<ParticleSystem>().Play();
+            //audioSource.PlayOneShot(perfect);
+        }
         
         if (isCanPress && (Input.GetKeyDown(firstKeyCode) || Input.GetKeyDown(secondKeyCode)))
         {
@@ -149,6 +156,8 @@ public class JurgeNote : MonoBehaviour
         audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
         destroyedNoteID.Add(target.GetComponent<NoteController>().NoteID);
+        
+        targets.Dequeue();
         if (target.GetComponent<NoteController>().NoteType == 0 || target.GetComponent<NoteController>().NoteType == 1)
         {
             Destroy(target);
@@ -190,6 +199,7 @@ public class JurgeNote : MonoBehaviour
         CreateText("Good");
         audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
+        targets.Dequeue();
         Destroy(target);
         target = null;
         Debug.Log("good");
@@ -218,6 +228,7 @@ public class JurgeNote : MonoBehaviour
         CreateText("Miss");
         audioSource.clip = miss;
         audioSource.Play();
+        targets.Dequeue();
         if (target.GetComponent<NoteController>().NoteType == 0 || target.GetComponent<NoteController>().NoteType == 1)
         {
             Destroy(target);
@@ -249,7 +260,12 @@ public class JurgeNote : MonoBehaviour
         }
         else // 롱노트 끝에 닿았다면
         {
-            isTailEnter = true;
+            //isTailEnter = true;
+            if (isHoding)
+            {
+                GetComponent<PhotonView>().RPC("EndHolding",RpcTarget.All);
+            }
+            GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,target.GetComponent<NoteController>().scaleNum);
         }
         
     }
@@ -275,8 +291,8 @@ public class JurgeNote : MonoBehaviour
         
         if(targetNoteType == 2 && isTailEnter) // 롱노트 끝에서 나갔다면
         {
-            isTailEnter = false;
-            GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,target.GetComponent<NoteController>().scaleNum);
+            //isTailEnter = false;
+            //GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,target.GetComponent<NoteController>().scaleNum);
         }
         else if (targetNoteType == 1)
         {
@@ -285,12 +301,9 @@ public class JurgeNote : MonoBehaviour
                 return;
             }
             
-            isTailEnter = false;
+            //isTailEnter = false;
             GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
         }
-        Debug.Log("OnTriggerExit2D");
-        targets.Dequeue();
-        Debug.Log("OnTriggerExit2D, " + "targets.count: " + targets.Count);
     }
 
     public void OnTargetButtonDown(PointerEventData eventData)
@@ -319,7 +332,8 @@ public class JurgeNote : MonoBehaviour
                 }
                 else if(temp.NoteType == 1)
                 {
-                    isHoding = true;
+                    audioSource.PlayOneShot(scaleList[temp.scaleNum]);
+                    GetComponent<PhotonView>().RPC("StartHolding",RpcTarget.All);
                 }
                 
             }
@@ -331,7 +345,8 @@ public class JurgeNote : MonoBehaviour
                 }
                 else if (temp.NoteType == 1)
                 {
-                    isHoding = true;
+                    audioSource.PlayOneShot(scaleList[temp.scaleNum]);
+                    GetComponent<PhotonView>().RPC("StartHolding",RpcTarget.All);
                 }
             }
             else
@@ -344,7 +359,12 @@ public class JurgeNote : MonoBehaviour
 
     public void OnTargetButtonUp(PointerEventData eventData)
     {
-        isHoding = false;
+        //isHoding = false;
+        if (isHoding)
+        {
+            GetComponent<PhotonView>().RPC("EndHolding",RpcTarget.All);
+        }
+        
         Debug.Log("OnTargetButtonUp: " + Thread.CurrentThread.ManagedThreadId);
         Debug.Log("OnTargetButtonUp1111, " + "targets.Count: " + targets.Count);
         if (target == null || targets.Count == 0)
@@ -352,18 +372,37 @@ public class JurgeNote : MonoBehaviour
             return;
         }
         
+        if (target.GetComponent<NoteController>().actorNumber != PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            return;
+        }
+        
         if (isTailEnter)
         {
-            GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,target.GetComponent<NoteController>().scaleNum);
-            isTailEnter = false;
+            //GetComponent<PhotonView>().RPC("PressPerfect",RpcTarget.All,target.GetComponent<NoteController>().scaleNum);
+            //isTailEnter = false;
         }
         else
         {
             _isProcessMiss = true;
-            targets.Dequeue();
+            //targets.Dequeue();
             GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
             Debug.Log("OnTargetButtonUp, " + "targets.Count: " + targets.Count);
             _isProcessMiss = false;
         }
+    }
+
+    [PunRPC]
+    public void StartHolding()
+    {
+        isHoding = true;
+        target.transform.DOKill();
+        target.transform.GetChild(1).DOMove(target.transform.position, 2);
+    }
+
+    [PunRPC]
+    public void EndHolding()
+    {
+        isHoding = false;
     }
 }
