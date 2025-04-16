@@ -332,7 +332,6 @@ public class JurgeNote : MonoBehaviour
                 }
                 else if(temp.NoteType == 1)
                 {
-                    audioSource.PlayOneShot(scaleList[temp.scaleNum]);
                     GetComponent<PhotonView>().RPC("StartHolding",RpcTarget.All);
                 }
                 
@@ -345,7 +344,6 @@ public class JurgeNote : MonoBehaviour
                 }
                 else if (temp.NoteType == 1)
                 {
-                    audioSource.PlayOneShot(scaleList[temp.scaleNum]);
                     GetComponent<PhotonView>().RPC("StartHolding",RpcTarget.All);
                 }
             }
@@ -395,9 +393,10 @@ public class JurgeNote : MonoBehaviour
     [PunRPC]
     public void StartHolding()
     {
+        audioSource.PlayOneShot(scaleList[target.GetComponent<NoteController>().scaleNum]);
         isHoding = true;
         target.transform.DOKill();
-        target.transform.GetChild(1).DOMove(target.transform.position, 2);
+        target.transform.GetChild(1).DOMove(target.transform.position, 1);
     }
 
     [PunRPC]
