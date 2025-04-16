@@ -40,7 +40,8 @@ public class JurgeNote : MonoBehaviour
     public bool isHoding;
     public bool isTailEnter;
     private bool _isProcessMiss;
-    
+    private TMP_Text _combo;
+    private static int _comboCount;
     public void ResetCount()
     {
         perfectCount = 0;
@@ -57,12 +58,14 @@ public class JurgeNote : MonoBehaviour
         perfectText = GameObject.Find("Perfect").GetComponent<TMP_Text>();
         goodText = GameObject.Find("Good").GetComponent<TMP_Text>();
         missText = GameObject.Find("Miss").GetComponent<TMP_Text>();
-        
+        _combo =GameObject.Find("Combo").GetComponent<TMP_Text>();
+            
         isCanPress = false;
         audioSource = GetComponent<AudioSource>();
         targets = new Queue<GameObject>();
         //CreateText("hello");
         destroyedNoteID = new HashSet<int>();
+        _firstPos = _combo.transform.position;
     }
 
     // Update is called once per frame
@@ -152,6 +155,7 @@ public class JurgeNote : MonoBehaviour
         perfectCount++;
         perfectText.text = $"perfect: {perfectCount}"; 
         GetComponentInChildren<ParticleSystem>().Play();
+        ChangeCombo("perfect");
         CreateText("Perfect");
         audioSource.clip = scaleList[scaleNum];
         audioSource.Play();
@@ -194,7 +198,7 @@ public class JurgeNote : MonoBehaviour
         
         goodCount++;
         goodText.text = $"good: {goodCount}"; 
-        
+        ChangeCombo("Miss");
         GetComponentInChildren<ParticleSystem>().Play();
         CreateText("Good");
         audioSource.clip = scaleList[scaleNum];
@@ -225,6 +229,7 @@ public class JurgeNote : MonoBehaviour
         missCount++;
         missText.text = $"miss: {missCount}"; 
         
+        ChangeCombo("miss");
         CreateText("Miss");
         audioSource.clip = miss;
         audioSource.Play();
@@ -302,6 +307,10 @@ public class JurgeNote : MonoBehaviour
             }
             
             //isTailEnter = false;
+            GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
+        }
+        else
+        {
             GetComponent<PhotonView>().RPC("PressMiss",RpcTarget.All);
         }
     }
@@ -403,5 +412,38 @@ public class JurgeNote : MonoBehaviour
     public void EndHolding()
     {
         isHoding = false;
+    }
+
+    private Vector3 _firstPos;
+    public void ChangeCombo(string judge)
+    {
+        _combo.transform.DOKill();
+        _combo.transform.localScale = new Vector3(1, 1, 1);
+        _combo.transform.position = _firstPos;
+        
+        Sequence sequence = DOTween.Sequence();
+        
+        switch (judge)
+        {
+            case "perfect":
+                _comboCount++;
+                _combo.text = "PERFECT\n" + _comboCount;
+                //sequence.Append(_combo.transform.DOPunchPosition(new Vector3(2f, 2f, 1), 1f));
+                sequence.Join(_combo.transform.DOPunchScale(new Vector3(0.25f,0.25f,0),0.3f));
+                sequence.Play();
+                break;
+            case "good":
+                _comboCount++;
+                _combo.text = "GOOD\n" + _comboCount;
+                //sequence.Append(_combo.transform.DOPunchPosition(new Vector3(2f, 2f, 1), 1f));
+                sequence.Join(_combo.transform.DOPunchScale(new Vector3(0.25f,0.25f,0),0.3f));
+                sequence.Play();
+                break;
+            case "miss":
+                _comboCount = 0;
+                _combo.text = "Miss\n" + _comboCount;
+                //_combo.transform.DOPunchPosition(new Vector3(1.2f, 1.2f, 1), 0.2f);
+                break;
+        }
     }
 }
